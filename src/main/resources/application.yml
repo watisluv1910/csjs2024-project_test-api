@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: polling_stations_api
+  profiles:
+    default: dev
+  data:
+    rest:
+      base-path: /api
+  datasource:
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    generate-ddl: false
+    show-sql: false
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  flyway:
+    enabled: true
