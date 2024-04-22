@@ -5,11 +5,12 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AddressRepository extends BaseRepository<@Valid AddressEntity, Long> {
+public interface AddressRepository extends JpaRepository<@Valid AddressEntity, Long> {
 
     @Query(value = """
             SELECT a.id FROM address a

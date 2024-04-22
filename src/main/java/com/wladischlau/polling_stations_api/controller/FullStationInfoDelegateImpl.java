@@ -4,7 +4,6 @@ import com.wladischlau.polling_stations_api.FullStationInfoApi;
 import com.wladischlau.polling_stations_api.FullStationInfoApiDelegate;
 import com.wladischlau.polling_stations_api.model.Address;
 import com.wladischlau.polling_stations_api.model.StationInfo;
-import com.wladischlau.polling_stations_api.model.StationList;
 import com.wladischlau.polling_stations_api.service.StationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

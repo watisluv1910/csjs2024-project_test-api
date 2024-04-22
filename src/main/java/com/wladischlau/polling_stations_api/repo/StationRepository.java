@@ -3,6 +3,7 @@ package com.wladischlau.polling_stations_api.repo;
 import com.wladischlau.polling_stations_api.model.station.StationEntity;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface StationRepository extends BaseRepository<@Valid StationEntity, Long> {
+public interface StationRepository extends JpaRepository<@Valid StationEntity, Long> {
 
     @Query(value = """
             SELECT ps.* FROM polling_station ps

@@ -1,11 +1,8 @@
 package com.wladischlau.polling_stations_api.model.station;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wladischlau.polling_stations_api.model.AttendanceEntity;
 import com.wladischlau.polling_stations_api.model.StationAddressRelationEntity;
-import com.wladischlau.polling_stations_api.model.address.AddressEntity;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
