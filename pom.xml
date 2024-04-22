@@ -19,6 +19,11 @@
         <spring.version>3.1.11</spring.version>
         <testcontainers.version>1.19.7</testcontainers.version>
         <flyway.version>10.11.1</flyway.version>
+        <openapi-generator-maven-plugin.version>7.5.0</openapi-generator-maven-plugin.version>
+        <jakarta-validation-api.version>3.0.2</jakarta-validation-api.version>
+        <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
+        <junit-jupiter-api.version>5.10.2</junit-jupiter-api.version>
+        <api-specification-name>openapi.yml</api-specification-name>
     </properties>
     <dependencies>
 
@@ -87,6 +92,32 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator-maven-plugin</artifactId>
+            <version>${openapi-generator-maven-plugin.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>${jakarta-validation-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>${jackson-databind-nullable.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit-jupiter-api.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>
@@ -119,6 +150,39 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>polling-stations-api-service</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/api/reference/${api-specification-name}</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>com.wladischlau.polling_stations_api</apiPackage>
+                            <modelPackage>com.wladischlau.polling_stations_api.model</modelPackage>
+                            <skipValidateSpec>false</skipValidateSpec>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <ignoreFileOverride>.openapi-generator-ignore</ignoreFileOverride>
+                            <configOptions>
+                                <title>Polling Stations Attendance App test API</title>
+                                <sourceFolder>src/gen/java/main</sourceFolder>
+                                <useTags>true</useTags>
+                                <delegatePattern>true</delegatePattern>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <useJakartaEe>true</useJakartaEe>
+                                <serializableModel>true</serializableModel>
+                                <serializationLibrary>jackson</serializationLibrary>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

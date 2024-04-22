@@ -1,6 +1,6 @@
 openapi: "3.0.3"
 servers:
-  - url: "http://localhost:8080/api"
+  - url: "http://localhost:8081/api"
     description: "Default development server"
 info:
   version: "1.0.0"

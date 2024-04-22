@@ -16,5 +16,7 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: none
+  mustache:
+    check-template-location: false
   flyway:
     enabled: true
