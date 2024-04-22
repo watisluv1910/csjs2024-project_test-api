@@ -1,0 +1,373 @@
+openapi: "3.0.3"
+servers:
+  - url: "http://localhost:8080/api"
+    description: "Default development server"
+info:
+  version: "1.0.0"
+  title: "Polling Stations test API"
+  description: |
+    This is a dummy API to serve for the local 
+    development of the 'El Traffic' application.
+  contact:
+    name: "Election Traffic support"
+    email: "election.traffic.support@gmail.com"
+  license:
+    name: Apache-2.0
+    url: "https://www.apache.org/licenses/LICENSE-2.0.html"
+externalDocs:
+  description: "Project's GitHub repository"
+  url: 'https://github.com/watisluv1910'
+tags:
+  - name: 'Full Station Info'
+    description: Search for full info about polling stations.
+  - name: 'Brief Station Info'
+    description: Search for brief info about polling stations.
+
+paths:
+
+  /v1/stations:
+    get:
+      tags:
+        - 'Brief Station Info'
+      summary: Search for brief info about all polling stations in all regions.
+      operationId: getStations
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StationList"
+        400:
+          description: Bad Request
+
+  /v1/stations/filtered:
+    get:
+      tags:
+        - 'Brief Station Info'
+      summary: Search for all polling stations, divided by page with limit, and filter by region code(s) or station number(s).
+      operationId: getStationsFiltered
+      parameters:
+        - $ref: "#/components/parameters/stationsFilterQueryParam"
+        - $ref: "#/components/parameters/pageNumberQueryParam"
+        - $ref: "#/components/parameters/limitNumberQueryParam"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StationList"
+        400:
+          description: Bad Request
+
+  /v1/stations/byBorderAddress:
+    get:
+      tags:
+        - 'Full Station Info'
+      summary: Search for polling stations by the full border address, divided by page with limit.
+      operationId: getStationsByBorderAddress
+      parameters:
+        - $ref: "#/components/parameters/addressQueryParam"
+        - $ref: "#/components/parameters/pageNumberQueryParam"
+        - $ref: "#/components/parameters/limitNumberQueryParam"
+      responses:
+        200:
+          description: Success
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/StationList"
+        400:
+          description: Bad Request
+
+  /v1/stations/{stationId}:
+    get:
+      tags:
+        - 'Full Station Info'
+      summary: Search for a polling station by polling station ID.
+      operationId: getStationInfoById
+      parameters:
+        - $ref: "#/components/parameters/stationIdParam"
+      responses:
+        200:
+          description: Success
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/StationInfo"
+        400:
+          description: Bad Request
+
+  /v1/stations/{stationNumber}/regions/{regionCode}:
+    get:
+      tags:
+        - 'Full Station Info'
+      summary: Search for a polling station by region code and polling station's number.
+      operationId: getStationInfoByRegionCodeAndStationNumber
+      parameters:
+        - $ref: "#/components/parameters/regionCodeParam"
+        - $ref: "#/components/parameters/stationNumberParam"
+      responses:
+        200:
+          description: Success
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/StationInfo"
+        400:
+          description: Bad Request
+
+components:
+
+  schemas:
+    ID:
+      description: Default positive integer ID.
+      type: integer
+      format: int64
+      minimum: 1
+      readOnly: true
+
+    StationNumber:
+      description: Official polling station designation.
+      type: integer
+      format: int32
+      minimum: 1
+
+    RegionCode:
+      description: Region code in ISO_3166-2:RU notation.
+      type: string
+      minLength: 2
+      maxLength: 3
+
+    HourOfDay:
+      description: Hour of day in 24-hours notation.
+      type: integer
+      format: int32
+      minimum: 0
+      maximum: 23
+
+    Address:
+      title: Address Info
+      description: Object containing all the basic info about the address.
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/ID"
+        region_code:
+          $ref: "#/components/schemas/RegionCode"
+        city:
+          type: string
+          maxLength: 128
+        street:
+          type: string
+          maxLength: 64
+        house_number:
+          type: string
+          maxLength: 10
+        building:
+          type: string
+          minLength: 1
+          maxLength: 2
+      required:
+        - id
+        - region_code
+        - city
+        - street
+        - house_number
+
+    StationAddressesList:
+      title: Station Address List
+      description: Object containing all addresses related to station, divided by address type.
+      type: object
+      properties:
+        ADDRESS_TYPE_BORDER:
+          type: array
+          items:
+            $ref: "#/components/schemas/Address"
+          minItems: 1
+          uniqueItems: true
+        ADDRESS_TYPE_ACTUAL:
+          $ref: "#/components/schemas/Address"
+        ADDRESS_TYPE_COMMISSION:
+          $ref: "#/components/schemas/Address"
+      required:
+        - ADDRESS_TYPE_BORDER
+        - ADDRESS_TYPE_ACTUAL
+        - ADDRESS_TYPE_COMMISSION
+
+    Attendance:
+      title: Attendance Info
+      description: Object containing attendance data
+        for the specific polling station at the specific time.
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/ID"
+        date:
+          type: string
+          format: date
+        hour:
+          $ref: "#/components/schemas/HourOfDay"
+        attendance:
+          type: integer
+          format: int64
+          minimum: 0
+      required:
+        - id
+        - date
+        - hour
+        - attendance
+
+    StationInfo:
+      title: Station Info
+      description: Object containing full info about polling station.
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/ID"
+        ps_number:
+          $ref: "#/components/schemas/StationNumber"
+        hotline:
+          type: string
+          format: '^8-\d{3}-\d{3}-\d{2}-\d{2}$'
+        opens_at_hour:
+          $ref: "#/components/schemas/HourOfDay"
+        closes_at_hour:
+          $ref: "#/components/schemas/HourOfDay"
+        addresses:
+          $ref: "#/components/schemas/StationAddressesList"
+        attendance:
+          type: array
+          items:
+            $ref: "#/components/schemas/Attendance"
+      required:
+        - id
+        - ps_number
+        - hotline
+        - opens_at_hour
+        - closes_at_hour
+        - addresses
+
+    StationInfoBrief:
+      title: Station Info Brief
+      description: Object containing brief info about polling station.
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/ID"
+        ps_number:
+          $ref: "#/components/schemas/StationNumber"
+        actual_address:
+          $ref: "#/components/schemas/Address"
+      required:
+        - id
+        - ps_number
+        - actual_address
+
+    StationList:
+      title: Station List
+      description: Object containing brief stations info grouped by regions.
+      type: object
+      properties:
+        regions:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                $ref: "#/components/schemas/RegionCode"
+              stations:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StationInfoBrief"
+            required:
+              - code
+              - stations
+      required:
+        - regions
+
+    StationsFilter:
+      title: Stations Filter
+      description: Provides stations filter object to
+        filter by region code(s) or ps_number(s).
+      type: object
+      properties:
+        region-code:
+          type: string
+          example: 'MOW,CE'
+        ps-number:
+          type: string
+          example: '918,920'
+      minProperties: 1
+      maxProperties: 1
+      additionalProperties: false
+
+  parameters:
+    regionCodeParam:
+      name: regionCode
+      in: path
+      description: Region code in ISO_3166-2:RU notation.
+      required: true
+      schema:
+        $ref: "#/components/schemas/RegionCode"
+
+    stationNumberParam:
+      name: stationNumber
+      in: path
+      description: Polling station number, unique in each region.
+      required: true
+      schema:
+        $ref: "#/components/schemas/StationNumber"
+
+    stationIdParam:
+      name: stationId
+      in: path
+      description: Polling station unique ID.
+      required: true
+      schema:
+        $ref: "#/components/schemas/ID"
+
+    stationsFilterQueryParam:
+      name: filter
+      in: query
+      description: Filter object to filter stations by one or more region codes or station numbers.
+      required: true
+      style: deepObject
+      explode: true
+      allowReserved: true
+      schema:
+        $ref: "#/components/schemas/StationsFilter"
+
+    addressQueryParam:
+      name: border-address
+      in: query
+      description: Full border address to search for.
+      required: true
+      style: deepObject
+      allowReserved: true
+      schema:
+        $ref: "#/components/schemas/Address"
+
+    pageNumberQueryParam:
+      name: page
+      in: query
+      description: The page number to start with (see limit).
+      required: true
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        default: 1
+
+    limitNumberQueryParam:
+      name: limit
+      in: query
+      description: Maximum number of items to return.
+      required: true
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 25
+        default: 10
