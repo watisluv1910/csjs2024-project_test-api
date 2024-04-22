@@ -20,3 +20,9 @@ spring:
     check-template-location: false
   flyway:
     enabled: true
+
+server:
+  tomcat:
+    relaxed-query-chars:
+    - '['
+    - ']'

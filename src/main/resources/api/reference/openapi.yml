@@ -45,12 +45,11 @@ paths:
     get:
       tags:
         - 'Brief Station Info'
-      summary: Search for all polling stations, divided by page with limit, and filter by region code(s) or station number(s).
+      summary: Search for all polling stations and filter by region code(s) or station number(s).
       operationId: getStationsFiltered
       parameters:
-        - $ref: "#/components/parameters/stationsFilterQueryParam"
-        - $ref: "#/components/parameters/pageNumberQueryParam"
-        - $ref: "#/components/parameters/limitNumberQueryParam"
+        - $ref: "#/components/parameters/regionCodeListQueryParam"
+        - $ref: "#/components/parameters/stationNumberListQueryParam"
       responses:
         200:
           description: Success
@@ -62,22 +61,27 @@ paths:
           description: Bad Request
 
   /v1/stations/byBorderAddress:
-    get:
+    post:
       tags:
         - 'Full Station Info'
-      summary: Search for polling stations by the full border address, divided by page with limit.
-      operationId: getStationsByBorderAddress
+      summary: Search for polling station by the full border address.
+      operationId: getStationInfoByBorderAddress
       parameters:
-        - $ref: "#/components/parameters/addressQueryParam"
-        - $ref: "#/components/parameters/pageNumberQueryParam"
-        - $ref: "#/components/parameters/limitNumberQueryParam"
+        - $ref: "#/components/parameters/attendanceDateQueryParam"
+      requestBody:
+        description: Address request body
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Address"
       responses:
         200:
           description: Success
           content:
             "application/json":
               schema:
-                $ref: "#/components/schemas/StationList"
+                $ref: "#/components/schemas/StationInfo"
         400:
           description: Bad Request
 
@@ -89,6 +93,7 @@ paths:
       operationId: getStationInfoById
       parameters:
         - $ref: "#/components/parameters/stationIdParam"
+        - $ref: "#/components/parameters/attendanceDateQueryParam"
       responses:
         200:
           description: Success
@@ -108,6 +113,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/regionCodeParam"
         - $ref: "#/components/parameters/stationNumberParam"
+        - $ref: "#/components/parameters/attendanceDateQueryParam"
       responses:
         200:
           description: Success
@@ -133,12 +139,15 @@ components:
       type: integer
       format: int32
       minimum: 1
+      example: 918
 
     RegionCode:
       description: Region code in ISO_3166-2:RU notation.
       type: string
+      format: "^[A-Z]{2,3}$"
       minLength: 2
       maxLength: 3
+      example: MOW
 
     HourOfDay:
       description: Hour of day in 24-hours notation.
@@ -159,16 +168,20 @@ components:
         city:
           type: string
           maxLength: 128
+          example: Москва
         street:
           type: string
           maxLength: 64
+          example: ул. 16-я Парковая
         house_number:
           type: string
           maxLength: 10
+          example: 21
         building:
           type: string
           minLength: 1
           maxLength: 2
+          example: 2
       required:
         - id
         - region_code
@@ -287,22 +300,6 @@ components:
       required:
         - regions
 
-    StationsFilter:
-      title: Stations Filter
-      description: Provides stations filter object to
-        filter by region code(s) or ps_number(s).
-      type: object
-      properties:
-        region-code:
-          type: string
-          example: 'MOW,CE'
-        ps-number:
-          type: string
-          example: '918,920'
-      minProperties: 1
-      maxProperties: 1
-      additionalProperties: false
-
   parameters:
     regionCodeParam:
       name: regionCode
@@ -328,16 +325,44 @@ components:
       schema:
         $ref: "#/components/schemas/ID"
 
-    stationsFilterQueryParam:
-      name: filter
+    attendanceDateQueryParam:
+      name: date
       in: query
-      description: Filter object to filter stations by one or more region codes or station numbers.
-      required: true
-      style: deepObject
-      explode: true
+      description: Date ISO 8601 format by which the attendance info should be given (exclusive).
       allowReserved: true
+      required: false
       schema:
-        $ref: "#/components/schemas/StationsFilter"
+        type: string
+        format: date
+        example: '2024-03-15'
+
+    regionCodeListQueryParam:
+      name: regions
+      in: query
+      description: List of region codes to be filtered by.
+      style: form
+      explode: false
+      allowReserved: true
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: "#/components/schemas/RegionCode"
+        minItems: 1
+
+    stationNumberListQueryParam:
+      name: stations
+      in: query
+      description: List of station numbers to be filtered by.
+      style: form
+      explode: false
+      allowReserved: true
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: "#/components/schemas/StationNumber"
+        minItems: 1
 
     addressQueryParam:
       name: border-address
@@ -348,26 +373,3 @@ components:
       allowReserved: true
       schema:
         $ref: "#/components/schemas/Address"
-
-    pageNumberQueryParam:
-      name: page
-      in: query
-      description: The page number to start with (see limit).
-      required: true
-      schema:
-        type: integer
-        format: int32
-        minimum: 1
-        default: 1
-
-    limitNumberQueryParam:
-      name: limit
-      in: query
-      description: Maximum number of items to return.
-      required: true
-      schema:
-        type: integer
-        format: int32
-        minimum: 1
-        maximum: 25
-        default: 10
