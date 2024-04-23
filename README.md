@@ -1,4 +1,7 @@
-The Polling Stations Attendance Service API
+![Project version](https://img.shields.io/badge/Project_version-1.0.0-gree)
+![Contributors](https://img.shields.io/badge/Contributors-1-blue)
+
+Election Traffic: Polling Station Load Service API
 ================================================
 Test API for Polling stations Attendance Service.
 
