@@ -16,7 +16,7 @@
     <description>polling_stations_api</description>
     <properties>
         <java.version>21</java.version>
-        <spring.version>3.1.11</spring.version>
+        <spring.version>3.2.5</spring.version>
         <flyway.version>10.11.1</flyway.version>
         <openapi-generator-maven-plugin.version>7.5.0</openapi-generator-maven-plugin.version>
         <jakarta-validation-api.version>3.0.2</jakarta-validation-api.version>
