@@ -20,7 +20,7 @@ public interface AddressRepository extends JpaRepository<@Valid AddressEntity, L
             AND a.city = :city
             AND a.street = :street
             AND a.house_number = :houseNumber
-            AND a.building = :building
+            AND ((a.building = :building) OR a.building IS NULL AND :building IS NULL)
             """, nativeQuery = true)
     Long findBorderAddressIdByAllParams(
             @NotBlank @Pattern(regexp = "[A-Z]{2,3}") String regionCode,
