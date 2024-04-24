@@ -3,38 +3,69 @@
 
 Election Traffic: Polling Station Load Service API
 ================================================
-Test API for Polling stations Attendance Service.
 
-Requirements
-------------
-- [Docker](https://docs.docker.com/install/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
+Данная система является API-сервером для 
+[клиентского приложения](https://github.com/watisluv1910/csjs2024-project_client) 
+**Election Traffic: Polling Station Load Service**, разработаной как часть итогового
+практического задания для CROC Spring Java School 2024.
 
-Development
------------
-1. Run Postgres database as Docker container:
-    - Create and start container: `docker run -d --name polling_stations_api_db --env 'POSTGRES_USER=postgres' --env 'POSTGRES_PASSWORD=postgres' --env 'POSTGRES_DB=polling_stations_db' --env 'PG_TRUST_LOCALNET=true' -p 5433:5432 postgres:latest`.
-    - Stop running container: `docker stop polling_stations_api_db`.
-    - Start container: `docker start polling_stations_api_db`.
-    - Remove container: `docker rm polling_stations_api_db`.
-2. Go to location of `pom.xml` and run Spring Boot application: `mvn spring-boot:run`.
-3. Test API.
+## Краткое описание проекта
 
-Docker Compose usage
---------------------
-1. Run Docker-Compose command to create and start application and database: `docker-compose up -d`.
-2. When application starts, test API.
-3. Run Docker-Compose command to stop and destroy application and database: `docker-compose down`.
+Основная цель данного проекта - сбор статистики об избирательных участках и их
+посещаемости во время проведения электоральных процедур. После
+использования приложения и получения предоставляемых им данных,
+пользователь сможет как составить комплексную оценку посещаемости выборов,
+так и просто решить, в какое время ему завтра лучше идти голосовать,
+чтобы провести как можно меньшее количество времени в очереди перед участком.
 
-##### Docker Compose commands:
-- `docker-compose up` - create and start Docker containers
-- `docker-compose up -d` - create and start Docker containers in the background
-- `docker-compose down` - stop and destroy Docker containers
-- `docker-compose start` - start Docker containers
-- `docker-compose stop` - stop Docker containers
-- `docker-compose logs -f` - tailing logs of Docker containers
-- `docker-compose ps` - check status of Docker containers
+> Для обеспечения целостности данных и определённой доли исторической достоверности,
+в качестве временного промежутка, на котором проходит
+электоральная процедура, выбран период между **15.03.2024** и **17.03.2024**.
 
-##### Persistence
-For PostgreSQL to preserve its state across container destroy and create, 
-Docker mount a volume located in `docker/storage` (defined in a Dockerfile).
+## Стэк используемых технологий
+
+- Spring (Java)
+- PostgresSQL
+- Flyway
+- **OpenAPI V3** - спецификация для описания API
+- Docker
+- **Git** - система контроля версий
+
+## Работа с проектом
+
+### Методы запуска сервиса и необходимое программное обеспечение
+
+Запуск сервиса возможен тремя способами:
+- Частично локально - необходима [Java](https://www.oracle.com/java/technologies/downloads/) >= v21 и [Docker](https://docs.docker.com/install/).
+- Полностью в изолированной среде Docker - необходим [Docker](https://docs.docker.com/install/) c [Docker Compose](https://docs.docker.com/compose/install/).
+
+Далее вышеперечисленные методы запуска приложения будут описаны подробно.
+
+#### Частично локальный запуск
+
+1. Клонировать репозиторий с проектом:
+   ```shell
+   git clone git@github.com:watisluv1910/csjs2024-project_test-api.git
+   ```
+2. Если необходимо, установить ПО, перечисленное в соотвествующем [разделе](#методы-запуска-сервиса-и-необходимое-программное-обеспечение).
+3. Предварительно запустив Docker, запустить базу данных как Docker контейнер с помощью команды:
+   ```shell
+   docker run -d --name polling_stations_api_db --env 'POSTGRES_USER=postgres' \
+    --env 'POSTGRES_PASSWORD=postgres' --env 'POSTGRES_DB=polling_stations_db' \
+    --env 'PG_TRUST_LOCALNET=true' -p 5433:5432 postgres:latest
+   ```
+4. Для запуска сервиса необходимо выполнить следующую команду в [**корневой директории**](/) проекта
+   <br>Для Unix-подобных систем:
+   ```shellPersistence
+   ./mvnw spring-boot:run
+   ``` 
+   Для Windows:
+    ```cmd
+    mvnw.cmd spring-boot:run
+    ```
+
+#### Запуск в изолированной среде Docker 
+
+1. Запустить [Docker](https://docs.docker.com/install/) с [Docker Compose](https://docs.docker.com/compose/install/).
+2. В [**корневой директории**](/) проекта выполнить команду `docker-compose up -d`.
+3. После использования сервиса и тестирования API ввести команду `docker-compose down`.
