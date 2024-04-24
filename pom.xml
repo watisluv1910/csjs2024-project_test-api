@@ -17,7 +17,9 @@
     <properties>
         <java.version>21</java.version>
         <spring.version>3.2.5</spring.version>
+        <lombok.version>1.18.32</lombok.version>
         <flyway.version>10.11.1</flyway.version>
+        <postgresql-jdbc-driver.version>42.7.2</postgresql-jdbc-driver.version>
         <openapi-generator-maven-plugin.version>7.5.0</openapi-generator-maven-plugin.version>
         <jakarta-validation-api.version>3.0.2</jakarta-validation-api.version>
         <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
@@ -29,11 +31,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
@@ -59,12 +63,15 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
+            <version>${postgresql-jdbc-driver.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -94,18 +101,6 @@
         </dependency>
 
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>testcontainers-bom</artifactId>
-                <version>${testcontainers.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <plugins>
